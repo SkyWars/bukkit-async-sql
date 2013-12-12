@@ -16,9 +16,9 @@
  */
 package net.daboross.bukkitdev.mysqlmap;
 
-public interface MySQLMapTable {
+public interface MySQLMapTable<T> {
 
-    public void get(String key, ResultRunnable runWithResult);
+    public void get(String key, ResultRunnable<T> runWithResult);
 
-    public void set(String key, String value, Runnable runAfter);
+    public void set(String key, T value, Runnable runAfter);
 }
