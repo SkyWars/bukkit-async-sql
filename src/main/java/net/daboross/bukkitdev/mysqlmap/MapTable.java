@@ -20,5 +20,5 @@ public interface MapTable<T> {
 
     public void get(String key, ResultRunnable<T> runWithResult);
 
-    public void set(String key, T value, ResultRunnable<Void> runAfter);
+    public void set(String key, T value, ResultRunnable<Boolean> runAfter);
 }
