@@ -21,6 +21,4 @@ public interface DatabaseConnection {
     public MapTable<String> getStringTable(String name);
 
     public MapTable<Integer> getIntTable(String name);
-
-    public MapTable<Long> getBigIntTable(String name);
 }
