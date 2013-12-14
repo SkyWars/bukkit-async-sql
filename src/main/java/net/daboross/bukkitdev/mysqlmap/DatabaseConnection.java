@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.daboross.bukkitdev.mysqlmap;
 
-public interface MySQLDatabaseConnection {
+public interface DatabaseConnection {
 
-    public MySQLMapTable<String> getStringTable(String name);
+    public MapTable<String> getStringTable(String name);
 
-    public MySQLMapTable<Integer> getIntTable(String name);
+    public MapTable<Integer> getIntTable(String name);
 
-    public MySQLMapTable<Long> getBigIntTable(String name);
+    public MapTable<Long> getBigIntTable(String name);
 }
