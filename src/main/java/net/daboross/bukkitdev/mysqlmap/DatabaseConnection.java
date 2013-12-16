@@ -16,9 +16,10 @@
  */
 package net.daboross.bukkitdev.mysqlmap;
 
+@SuppressWarnings("UnusedDeclaration")
 public interface DatabaseConnection {
 
-    public MapTable<String> getStringTable(String name);
+    public MapTable<String, String> getStringToStringTable(String name);
 
-    public MapTable<Integer> getIntTable(String name);
+    public MapTable<String, Integer> getStringToIntTable(String name);
 }
