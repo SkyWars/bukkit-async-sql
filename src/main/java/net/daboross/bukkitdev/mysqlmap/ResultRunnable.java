@@ -18,5 +18,5 @@ package net.daboross.bukkitdev.mysqlmap;
 
 public interface ResultRunnable<T> {
 
-    public void runWithResult(String key, T value);
+    public void runWithResult(T value);
 }
