@@ -20,74 +20,29 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.daboross.bukkitdev.mysqlmap.api.DatabaseConnection;
+import net.daboross.bukkitdev.mysqlmap.api.MapTable;
+import net.daboross.bukkitdev.mysqlmap.api.ResultRunnable;
+import net.daboross.bukkitdev.mysqlmap.internal.AsyncSQL;
+import net.daboross.bukkitdev.mysqlmap.internal.ResultHolder;
+import net.daboross.bukkitdev.mysqlmap.internal.ResultSQLRunnable;
+import net.daboross.bukkitdev.mysqlmap.internal.SQLRunnable;
 import org.bukkit.plugin.Plugin;
 
 public class SQLDatabaseConnection implements DatabaseConnection {
 
-    private final SQLConnectionInfo connectionInfo;
-    private final Logger logger;
-    private final Plugin plugin;
-    private final AsyncTaskScheduler taskScheduler;
-    private Connection connection;
+    private final AsyncSQL sql;
 
-    public SQLDatabaseConnection(SQLConnectionInfo connectionInfo, Logger logger, Plugin plugin) throws SQLException {
-        this.connectionInfo = connectionInfo;
-        this.logger = logger;
-        this.plugin = plugin;
-        this.taskScheduler = new AsyncTaskScheduler(plugin, logger, "SQL Task Thread for " + connectionInfo.getUrl());
-        try {
-            connection = connectionInfo.createConnection();
-        } catch (SQLException ex) {
-            logger.log(Level.WARNING, "Failed to create connection to `" + connectionInfo.getUrl() + "`", ex);
-            throw ex;
-        }
+    public SQLDatabaseConnection(Plugin plugin, Logger logger, SQLConnectionInfo connectionInfo) throws SQLException {
+        this.sql = new AsyncSQL(plugin, logger, connectionInfo);
     }
 
-    private void connectToSQL() throws SQLException {
-        try {
-            connection = connectionInfo.createConnection();
-        } catch (SQLException ex) {
-            logger.log(Level.WARNING, "Failed to create connection to `" + connectionInfo.getUrl() + "`", ex);
-            throw ex;
-        }
-    }
-
-    private void runAsync(final String taskName, final SQLRunnable runnable) {
-        taskScheduler.queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    try {
-                        runnable.run();
-                    } catch (SQLException ex) {
-                        try {
-                            logger.log(Level.INFO, "Failed to " + taskName + ": " + ex.getMessage() + ". Reconnecting and retrying.");
-                            connection.close();
-                            connectToSQL();
-                            runnable.run();
-                        } catch (SQLException ex2) {
-                            logger.log(Level.WARNING, "Failed to " + taskName + ", not retrying:", ex2);
-                        }
-                    }
-                } catch (RuntimeException ex) {
-                    throw new RuntimeException("Exception " + taskName + ":", ex);
-                }
-            }
-        });
-    }
-
-    private <T> void runSync(final ResultRunnable<T> result, final T toPass) {
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                result.runWithResult(toPass);
-            }
-        });
+    public SQLDatabaseConnection(Plugin plugin, SQLConnectionInfo connectionInfo) throws Exception {
+        this(plugin, plugin.getLogger(), connectionInfo);
     }
 
     @Override
@@ -111,9 +66,9 @@ public class SQLDatabaseConnection implements DatabaseConnection {
         private final String name;
 
         private void create() {
-            runAsync("create StringTable " + name, new SQLRunnable() {
+            sql.run("create StringTable " + name, new SQLRunnable() {
                 @Override
-                public void run() throws SQLException {
+                public void run(Connection connection) throws SQLException {
                     String query = String.format("CREATE TABLE IF NOT EXISTS `%s` (`stringKey` TEXT, `stringValue` TEXT, PRIMARY KEY (`stringKey`));", name);
                     PreparedStatement statement = connection.prepareStatement(query);
                     try {
@@ -126,13 +81,40 @@ public class SQLDatabaseConnection implements DatabaseConnection {
         }
 
         @Override
-        public void get(String key, ResultRunnable<String> runWithResult) {
-
+        public void get(final String key, final ResultRunnable<String> runWithResult) {
+            sql.run(String.format("get value %s from %s", key, name), new ResultSQLRunnable<String>() {
+                @Override
+                public void run(Connection connection, ResultHolder<String> result) throws SQLException {
+                    String query = String.format("SELECT `stringValue` FROM `%s` WHERE `stringKey` = ?", name);
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setString(1, key);
+                    try {
+                        statement.execute();
+                        ResultSet set = statement.executeQuery();
+                        result.set(set.getString(1));
+                    } finally {
+                        statement.close();
+                    }
+                }
+            }, runWithResult);
         }
 
         @Override
-        public void set(String key, String value, ResultRunnable<Boolean> runWithResult) {
-
+        public void set(final String key, final String value, final ResultRunnable<Boolean> runWithResult) {
+            sql.run(String.format("set value %s to %s in %s", key, value, name), new ResultSQLRunnable<Boolean>() {
+                @Override
+                public void run(Connection connection, ResultHolder<Boolean> result) throws SQLException {
+                    String query = String.format("REPLACE INTO `%s` (`stringKey`, `stringValue`) VALUES(?, ?)", name);
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setString(1, key);
+                    statement.setString(2, value);
+                    try {
+                        result.set(statement.executeUpdate() != 0);
+                    } finally {
+                        statement.close();
+                    }
+                }
+            }, runWithResult);
         }
     }
 
@@ -142,9 +124,9 @@ public class SQLDatabaseConnection implements DatabaseConnection {
         private final String name;
 
         private void create() {
-            runAsync("create IntTable " + name, new SQLRunnable() {
+            sql.run("create IntTable " + name, new SQLRunnable() {
                 @Override
-                public void run() throws SQLException {
+                public void run(Connection connection) throws SQLException {
                     String query = String.format("CREATE TABLE IF NOT EXISTS `%s` (`stringKey` TEXT, `intValue` INT, PRIMARY KEY (`stringKey`))", name);
                     PreparedStatement statement = connection.prepareStatement(query);
                     try {
@@ -158,30 +140,28 @@ public class SQLDatabaseConnection implements DatabaseConnection {
 
         @Override
         public void get(final String key, final ResultRunnable<Integer> runWithResult) {
-            runAsync(String.format("get value %s in %s", key, name), new SQLRunnable() {
+            sql.run(String.format("get value %s from %s", key, name), new ResultSQLRunnable<Integer>() {
                 @Override
-                public void run() throws SQLException {
+                public void run(Connection connection, ResultHolder<Integer> result) throws SQLException {
                     String query = String.format("SELECT `intValue` FROM `%s` WHERE `stringKey` = ?", name);
                     PreparedStatement statement = connection.prepareStatement(query);
                     statement.setString(1, key);
-                    Integer result = -1;
                     try {
                         statement.execute();
                         ResultSet set = statement.executeQuery();
-                        result = set.getInt(1);
+                        result.set(set.getInt(1));
                     } finally {
                         statement.close();
-                        runSync(runWithResult, result);
                     }
                 }
-            });
+            }, runWithResult);
         }
 
         @Override
         public void set(final String key, final Integer value, final ResultRunnable<Boolean> runWithResult) {
-            runAsync(String.format("set value for %s to %s in %s", key, value, name), new SQLRunnable() {
+            sql.run(String.format("set value %s to %s in %s", key, value, name), new ResultSQLRunnable<Boolean>() {
                 @Override
-                public void run() throws SQLException {
+                public void run(Connection connection, ResultHolder<Boolean> result) throws SQLException {
                     String query = String.format("REPLACE INTO `%s` (`stringKey`, `intValue`) VALUES(?, ?)", name);
                     PreparedStatement statement = connection.prepareStatement(query);
                     statement.setString(1, key);
@@ -191,10 +171,9 @@ public class SQLDatabaseConnection implements DatabaseConnection {
                         success = statement.executeUpdate() != 0;
                     } finally {
                         statement.close();
-                        runSync(runWithResult, success);
                     }
                 }
-            });
+            }, runWithResult);
         }
     }
 }

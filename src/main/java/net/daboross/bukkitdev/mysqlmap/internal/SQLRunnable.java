@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.daboross.bukkitdev.mysqlmap;
+package net.daboross.bukkitdev.mysqlmap.internal;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
-interface SQLRunnable {
+public interface SQLRunnable {
 
-    public void run() throws SQLException;
+    public void run(Connection connection) throws SQLException;
 }
