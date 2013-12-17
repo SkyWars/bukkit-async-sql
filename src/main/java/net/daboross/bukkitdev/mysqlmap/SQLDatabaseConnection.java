@@ -166,9 +166,9 @@ public class SQLDatabaseConnection implements DatabaseConnection {
                     PreparedStatement statement = connection.prepareStatement(query);
                     statement.setString(1, key);
                     statement.setInt(2, value);
-                    boolean success = false;
+
                     try {
-                        success = statement.executeUpdate() != 0;
+                        result.set(statement.executeUpdate() != 0);
                     } finally {
                         statement.close();
                     }
