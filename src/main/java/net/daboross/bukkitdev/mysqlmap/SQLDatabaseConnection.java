@@ -89,9 +89,12 @@ public class SQLDatabaseConnection implements DatabaseConnection {
                     PreparedStatement statement = connection.prepareStatement(query);
                     statement.setString(1, key);
                     try {
-                        statement.execute();
                         ResultSet set = statement.executeQuery();
-                        result.set(set.getString(1));
+                        if (!set.first()) {
+                            result.set(null);
+                            return;
+                        }
+                        result.set(set.getString("stringValue"));
                     } finally {
                         statement.close();
                     }
@@ -147,9 +150,12 @@ public class SQLDatabaseConnection implements DatabaseConnection {
                     PreparedStatement statement = connection.prepareStatement(query);
                     statement.setString(1, key);
                     try {
-                        statement.execute();
                         ResultSet set = statement.executeQuery();
-                        result.set(set.getInt(1));
+                        if (!set.first()) {
+                            result.set(null);
+                            return;
+                        }
+                        result.set(set.getInt("intValue"));
                     } finally {
                         statement.close();
                     }
@@ -166,7 +172,6 @@ public class SQLDatabaseConnection implements DatabaseConnection {
                     PreparedStatement statement = connection.prepareStatement(query);
                     statement.setString(1, key);
                     statement.setInt(2, value);
-
                     try {
                         result.set(statement.executeUpdate() != 0);
                     } finally {
