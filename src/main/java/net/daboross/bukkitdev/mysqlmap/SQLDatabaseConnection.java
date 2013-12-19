@@ -69,7 +69,7 @@ public class SQLDatabaseConnection implements DatabaseConnection {
             sql.run("create StringTable " + name, new SQLRunnable() {
                 @Override
                 public void run(Connection connection) throws SQLException {
-                    String query = String.format("CREATE TABLE IF NOT EXISTS `%s` (`stringKey` TEXT, `stringValue` TEXT, PRIMARY KEY (`stringKey`));", name);
+                    String query = String.format("CREATE TABLE IF NOT EXISTS `%s` (`stringKey` VARCHAR(32), `stringValue` TEXT, PRIMARY KEY (`stringKey`));", name);
                     PreparedStatement statement = connection.prepareStatement(query);
                     try {
                         statement.execute();
@@ -127,7 +127,7 @@ public class SQLDatabaseConnection implements DatabaseConnection {
             sql.run("create IntTable " + name, new SQLRunnable() {
                 @Override
                 public void run(Connection connection) throws SQLException {
-                    String query = String.format("CREATE TABLE IF NOT EXISTS `%s` (`stringKey` TEXT, `intValue` INT, PRIMARY KEY (`stringKey`))", name);
+                    String query = String.format("CREATE TABLE IF NOT EXISTS `%s` (`stringKey` VARCHAR(32), `intValue` INT, PRIMARY KEY (`stringKey`))", name);
                     PreparedStatement statement = connection.prepareStatement(query);
                     try {
                         statement.execute();

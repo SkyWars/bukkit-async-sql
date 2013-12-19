@@ -47,8 +47,7 @@ public class AsyncTaskScheduler implements Runnable {
 
     @Override
     public void run() {
-        if (name != null)
-            Thread.currentThread().setName(name);
+        if (name != null) Thread.currentThread().setName(name);
         while (true) {
             Runnable next;
             synchronized (queue) {

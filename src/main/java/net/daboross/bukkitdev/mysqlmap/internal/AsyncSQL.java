@@ -37,6 +37,7 @@ public class AsyncSQL {
         this.plugin = plugin;
         this.connectionInfo = connectionInfo;
         this.taskScheduler = new AsyncTaskScheduler(plugin, logger, "SQL Task Thread for " + connectionInfo.getUrl());
+        this.taskScheduler.start();
         connectToSQL();
     }
 
