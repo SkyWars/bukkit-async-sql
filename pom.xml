@@ -3,7 +3,7 @@
 
     <groupId>net.daboross.bukkitdev</groupId>
     <artifactId>mysql-map</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <name>MySQL Map</name>
@@ -30,7 +30,7 @@
         <url>https://github.com/daboross/mysql-map.git</url>
         <connection>scm:git:https://github.com/daboross/mysql-map.git</connection>
         <developerConnection>scm:git:git@github.com:daboross/mysql-map.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>mysql-map-0.0.1</tag>
     </scm>
     <properties>
         <netbeans.hint.license>gpl30</netbeans.hint.license>
