@@ -37,6 +37,7 @@ public class AsyncTaskScheduler implements Runnable {
     private boolean shouldStillRun;
 
     public void start() {
+        shouldStillRun = true;
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, this);
     }
 
@@ -51,12 +52,14 @@ public class AsyncTaskScheduler implements Runnable {
         synchronized (queue) {
             if (queue.isEmpty()) return;
         }
-        synchronized (allDoneLock) {
-            shouldStillRun = false;
-            try {
-                allDoneLock.wait();
-            } catch (InterruptedException ex) {
-                plugin.getLogger().log(Level.WARNING, "InterruptedException waiting for all sql to be done", ex);
+        if (shouldStillRun) {
+            synchronized (allDoneLock) {
+                shouldStillRun = false;
+                try {
+                    allDoneLock.wait();
+                } catch (InterruptedException ex) {
+                    plugin.getLogger().log(Level.WARNING, "InterruptedException waiting for all sql to be done", ex);
+                }
             }
         }
     }
