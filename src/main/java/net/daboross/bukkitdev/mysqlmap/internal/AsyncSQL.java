@@ -22,9 +22,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.daboross.bukkitdev.mysqlmap.SQLConnectionInfo;
 import net.daboross.bukkitdev.mysqlmap.api.ResultRunnable;
+import net.daboross.bukkitdev.mysqlmap.api.SQLConnection;
+import net.daboross.bukkitdev.mysqlmap.api.SQLRunnable;
 import org.bukkit.plugin.Plugin;
 
-public class AsyncSQL {
+public class AsyncSQL implements SQLConnection {
 
     private final AsyncTaskScheduler taskScheduler;
     private final Logger logger;
@@ -50,7 +52,8 @@ public class AsyncSQL {
         }
     }
 
-    public <T> void run(final String taskName, final SQLRunnable runnable) {
+    @Override
+    public void run(final String taskName, final SQLRunnable runnable) {
         taskScheduler.queueRunnable(new Runnable() {
             @Override
             public void run() {
@@ -74,6 +77,7 @@ public class AsyncSQL {
         });
     }
 
+    @Override
     public <T> void run(final String taskName, final ResultSQLRunnable<T> runnable, final ResultRunnable<T> runWithResult) {
         taskScheduler.queueRunnable(new Runnable() {
             @Override
@@ -101,7 +105,8 @@ public class AsyncSQL {
         });
     }
 
-    private <T> void runSync(final ResultRunnable<T> runWithResult, final T result) {
+    @Override
+    public <T> void runSync(final ResultRunnable<T> runWithResult, final T result) {
         if (runWithResult != null) {
             plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
                 @Override
@@ -110,5 +115,10 @@ public class AsyncSQL {
                 }
             });
         }
+    }
+
+    @Override
+    public void finishUp() {
+        taskScheduler.finishUp();
     }
 }

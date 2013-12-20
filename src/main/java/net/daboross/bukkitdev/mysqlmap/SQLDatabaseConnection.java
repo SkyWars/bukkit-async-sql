@@ -27,10 +27,11 @@ import lombok.RequiredArgsConstructor;
 import net.daboross.bukkitdev.mysqlmap.api.DatabaseConnection;
 import net.daboross.bukkitdev.mysqlmap.api.MapTable;
 import net.daboross.bukkitdev.mysqlmap.api.ResultRunnable;
+import net.daboross.bukkitdev.mysqlmap.api.SQLConnection;
+import net.daboross.bukkitdev.mysqlmap.api.SQLRunnable;
 import net.daboross.bukkitdev.mysqlmap.internal.AsyncSQL;
 import net.daboross.bukkitdev.mysqlmap.internal.ResultHolder;
 import net.daboross.bukkitdev.mysqlmap.internal.ResultSQLRunnable;
-import net.daboross.bukkitdev.mysqlmap.internal.SQLRunnable;
 import org.bukkit.plugin.Plugin;
 
 public class SQLDatabaseConnection implements DatabaseConnection {
@@ -41,7 +42,7 @@ public class SQLDatabaseConnection implements DatabaseConnection {
         this.sql = new AsyncSQL(plugin, logger, connectionInfo);
     }
 
-    public SQLDatabaseConnection(Plugin plugin, SQLConnectionInfo connectionInfo) throws Exception {
+    public SQLDatabaseConnection(Plugin plugin, SQLConnectionInfo connectionInfo) throws SQLException {
         this(plugin, plugin.getLogger(), connectionInfo);
     }
 
@@ -57,6 +58,16 @@ public class SQLDatabaseConnection implements DatabaseConnection {
         IntTable table = new IntTable(name);
         table.create();
         return table;
+    }
+
+    @Override
+    public SQLConnection getRawConnection() {
+        return sql;
+    }
+
+    @Override
+    public void finishUp() {
+        sql.finishUp();
     }
 
     @RequiredArgsConstructor

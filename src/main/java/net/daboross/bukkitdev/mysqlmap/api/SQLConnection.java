@@ -16,14 +16,15 @@
  */
 package net.daboross.bukkitdev.mysqlmap.api;
 
-@SuppressWarnings("UnusedDeclaration")
-public interface DatabaseConnection {
+import net.daboross.bukkitdev.mysqlmap.internal.ResultSQLRunnable;
 
-    public MapTable<String, String> getStringToStringTable(String name);
+public interface SQLConnection {
 
-    public MapTable<String, Integer> getStringToIntTable(String name);
+    public void run(final String taskName, final SQLRunnable runnable);
 
-    public SQLConnection getRawConnection();
+    public <T> void run(final String taskName, final ResultSQLRunnable<T> runnable, final ResultRunnable<T> runWithResult);
+
+    public <T> void runSync(final ResultRunnable<T> runWithResult, final T result);
 
     public void finishUp();
 }

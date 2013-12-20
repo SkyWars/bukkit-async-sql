@@ -28,11 +28,13 @@ import org.bukkit.plugin.Plugin;
 public class AsyncTaskScheduler implements Runnable {
 
     private final Queue<Runnable> queue = new LinkedList<Runnable>();
+    private final Object allDoneLock = new Object();
     @NonNull
     private final Plugin plugin;
     @NonNull
     private final Logger logger;
     private final String name;
+    private boolean shouldStillRun;
 
     public void start() {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, this);
@@ -45,6 +47,20 @@ public class AsyncTaskScheduler implements Runnable {
         }
     }
 
+    public void finishUp() {
+        synchronized (queue) {
+            if (queue.isEmpty()) return;
+        }
+        synchronized (allDoneLock) {
+            shouldStillRun = false;
+            try {
+                allDoneLock.wait();
+            } catch (InterruptedException ex) {
+                plugin.getLogger().log(Level.WARNING, "InterruptedException waiting for all sql to be done", ex);
+            }
+        }
+    }
+
     @Override
     public void run() {
         if (name != null) Thread.currentThread().setName(name);
@@ -53,6 +69,12 @@ public class AsyncTaskScheduler implements Runnable {
             synchronized (queue) {
                 next = queue.poll();
                 if (next == null) {
+                    synchronized (allDoneLock) {
+                        allDoneLock.notifyAll();
+                    }
+                    if (!shouldStillRun) {
+                        return;
+                    }
                     try {
                         queue.wait();
                     } catch (InterruptedException ex) {
