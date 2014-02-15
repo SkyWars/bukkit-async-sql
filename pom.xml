@@ -43,7 +43,7 @@
             <url>http://repo.bukkit.org/content/groups/public</url>
         </repository>
         <repository>
-            <id>repo-daboross</id>
+            <id>repo-daboross-net</id>
             <url>http://repo.daboross.net/</url>
         </repository>
     </repositories>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>0.12.0</version>
+            <version>1.12.4</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -100,13 +100,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>2.4</version>
-            </extension>
-        </extensions>
     </build>
 
     <issueManagement>
@@ -115,11 +108,17 @@
     </issueManagement>
     <distributionManagement>
         <repository>
-            <id>repo-daboross-net</id>
-            <name>repo.daboross.net</name>
+            <id>dabo.guru</id>
+            <name>Release Repository</name>
             <uniqueVersion>false</uniqueVersion>
-            <url>scp://repo.daboross.net/repo/</url>
+            <url>http://dabo.guru/nexus/content/repositories/releases/</url>
         </repository>
+        <snapshotRepository>
+            <id>dabo.guru</id>
+            <name>Snapshot Repository</name>
+            <uniqueVersion>false</uniqueVersion>
+            <url>http://dabo.guru/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <profiles>
