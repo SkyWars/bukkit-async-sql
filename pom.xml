@@ -3,7 +3,7 @@
 
     <groupId>net.daboross.bukkitdev</groupId>
     <artifactId>mysql-map-bukkit</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
 
     <name>MySQL Map Bukkit</name>
@@ -30,7 +30,7 @@
         <url>https://github.com/daboross/mysql-map-bukkit.git</url>
         <connection>scm:git:https://github.com/daboross/mysql-map-bukkit.git</connection>
         <developerConnection>scm:git:git@github.com:daboross/mysql-map-bukkit.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>mysql-map-bukkit-0.0.2</tag>
     </scm>
     <properties>
         <netbeans.hint.license>gpl30</netbeans.hint.license>
