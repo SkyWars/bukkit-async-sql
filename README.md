@@ -1,6 +1,6 @@
-MySQL Map
----------
+Bukkit Asynchronous SQL
+-----------------------
 
-Library for using MySQL as a map in Bukkit plugins.
+Library for using SQL in bukkit plugins.
 
-[TeamCity Development Builds - CI Server](http://ci.nlmc.pw/project.html?guest=1&projectId=BukkitPlugins_Libraries_MySQLMapBukkit)
+[TeamCity Development Builds - CI Server](http://ci.dabo.guru/p/BukkitAsyncSql)
