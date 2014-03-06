@@ -14,22 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.daboross.bukkitdev.mysqlmap;
+package net.daboross.bukkitdev.asyncsql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import lombok.Getter;
-import lombok.NonNull;
+import org.apache.commons.lang.Validate;
 
 public class SQLConnectionInfo {
 
-    @Getter
     private final String url;
     private final Properties properties;
 
-    public SQLConnectionInfo(@NonNull String host, int port, @NonNull String database, @NonNull String username, @NonNull String password) {
+    public SQLConnectionInfo(String host, int port, String database, String username, String password) {
+        Validate.notNull(host, "Host cannot be null");
+        Validate.notNull(database, "Database cannot be null");
+        Validate.notNull(username, "Username cannot be null");
+        Validate.notNull(password, "Password cannot be null");
         this.url = String.format("jdbc:mysql://%s:%s/%s", host, port, database);
         this.properties = new Properties();
         this.properties.setProperty("user", username);
@@ -38,5 +40,9 @@ public class SQLConnectionInfo {
 
     public Connection createConnection() throws SQLException {
         return DriverManager.getConnection(url, properties);
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

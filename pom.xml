@@ -2,13 +2,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.daboross.bukkitdev</groupId>
-    <artifactId>mysql-map-bukkit</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <artifactId>async-sql</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>MySQL Map Bukkit</name>
-    <description>MySQL Library in java.</description>
-    <url>https://github.com/daboross/mysql-map-bukkit</url>
+    <name>Bukkit Async SQL</name>
+    <description>SQL Library for Bukkit</description>
+    <url>https://github.com/daboross/bukkit-async-sql</url>
     <inceptionYear>2013</inceptionYear>
     <licenses>
         <license>
@@ -27,8 +27,8 @@
     </developers>
 
     <scm>
-        <url>https://github.com/daboross/mysql-map-bukkit.git</url>
-        <connection>scm:git:https://github.com/daboross/mysql-map-bukkit.git</connection>
+        <url>https://github.com/daboross/bukkit-async-sql.git</url>
+        <connection>scm:git:https://github.com/daboross/bukkit-async-sql.git</connection>
         <developerConnection>scm:git:git@github.com:daboross/mysql-map-bukkit.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
@@ -103,7 +103,7 @@
     </build>
 
     <issueManagement>
-        <url>https://github.com/daboross/mysql-map-bukkit/issues</url>
+        <url>https://github.com/daboross/bukkit-async-sql/issues</url>
         <system>Github Issues</system>
     </issueManagement>
     <distributionManagement>

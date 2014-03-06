@@ -14,16 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.daboross.bukkitdev.mysqlmap.api;
+package net.daboross.bukkitdev.asyncsql;
 
-@SuppressWarnings("UnusedDeclaration")
-public interface DatabaseConnection {
+import java.sql.Connection;
+import java.sql.SQLException;
 
-    public MapTable<String, String> getStringToStringTable(String name);
+public interface SQLRunnable {
 
-    public MapTable<String, Integer> getStringToIntTable(String name);
-
-    public SQLConnection getRawConnection();
-
-    public void finishUp();
+    public void run(Connection connection) throws SQLException;
 }

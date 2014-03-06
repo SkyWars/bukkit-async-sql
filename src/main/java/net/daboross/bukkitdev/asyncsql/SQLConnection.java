@@ -14,9 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.daboross.bukkitdev.mysqlmap.api;
+package net.daboross.bukkitdev.asyncsql;
 
-public interface ResultRunnable<T> {
+public interface SQLConnection {
 
-    public void runWithResult(T value);
+    public void run(final String taskName, final SQLRunnable runnable);
+
+    public <T> void run(final String taskName, final ResultSQLRunnable<T> runnable, final ResultRunnable<T> runWithResult);
+
+    public <T> void runSync(final ResultRunnable<T> runWithResult, final T result);
+
+    public void finishUp();
 }

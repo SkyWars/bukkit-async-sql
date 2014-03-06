@@ -14,16 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.daboross.bukkitdev.mysqlmap.internal;
+package net.daboross.bukkitdev.asyncsql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.daboross.bukkitdev.mysqlmap.SQLConnectionInfo;
-import net.daboross.bukkitdev.mysqlmap.api.ResultRunnable;
-import net.daboross.bukkitdev.mysqlmap.api.SQLConnection;
-import net.daboross.bukkitdev.mysqlmap.api.SQLRunnable;
 import org.bukkit.plugin.Plugin;
 
 public class AsyncSQL implements SQLConnection {
@@ -38,8 +34,7 @@ public class AsyncSQL implements SQLConnection {
         this.logger = logger;
         this.plugin = plugin;
         this.connectionInfo = connectionInfo;
-        this.taskScheduler = new AsyncTaskScheduler(plugin, logger, "SQL Task Thread for " + connectionInfo.getUrl());
-        this.taskScheduler.start();
+        this.taskScheduler = new AsyncTaskScheduler(logger, "SQL connection thread for " + connectionInfo.getUrl());
         connectToSQL();
     }
 
@@ -47,7 +42,7 @@ public class AsyncSQL implements SQLConnection {
         try {
             connection = connectionInfo.createConnection();
         } catch (SQLException ex) {
-            logger.log(Level.WARNING, "Failed to create connection to `" + connectionInfo.getUrl() + "`", ex);
+            logger.log(Level.WARNING, "Failed to create connection to '" + connectionInfo.getUrl() + "'", ex);
             throw ex;
         }
     }
@@ -62,16 +57,16 @@ public class AsyncSQL implements SQLConnection {
                         runnable.run(connection);
                     } catch (SQLException ex) {
                         try {
-                            logger.log(Level.INFO, "Failed to " + taskName + ": " + ex.getMessage() + ". Reconnecting and retrying.");
+                            logger.log(Level.INFO, "Failed to run '" + taskName + "': " + ex.getMessage() + ". Reconnecting and retrying.");
                             connection.close();
                             connectToSQL();
                             runnable.run(connection);
                         } catch (SQLException ex2) {
-                            logger.log(Level.WARNING, "Failed to " + taskName + ", not retrying:", ex2);
+                            logger.log(Level.WARNING, "Failed to run '" + taskName + "', not retrying:", ex2);
                         }
                     }
                 } catch (RuntimeException ex) {
-                    throw new RuntimeException("Exception " + taskName + ":", ex);
+                    throw new RuntimeException("Exception running '" + taskName + "':", ex);
                 }
             }
         });
@@ -88,16 +83,16 @@ public class AsyncSQL implements SQLConnection {
                         runnable.run(connection, result);
                     } catch (SQLException ex) {
                         try {
-                            logger.log(Level.INFO, "Failed to " + taskName + ": " + ex.getMessage() + ". Reconnecting and retrying.");
+                            logger.log(Level.INFO, "Failed to run '" + taskName + "': " + ex.getMessage() + ". Reconnecting and retrying.");
                             connection.close();
                             connectToSQL();
                             runnable.run(connection, result);
                         } catch (SQLException ex2) {
-                            logger.log(Level.WARNING, "Failed to " + taskName + ", not retrying:", ex2);
+                            logger.log(Level.WARNING, "Failed to run '" + taskName + "', not retrying:", ex2);
                         }
                     }
                 } catch (RuntimeException ex) {
-                    throw new RuntimeException("Exception " + taskName + ":", ex);
+                    throw new RuntimeException("Exception running '" + taskName + "':", ex);
                 } finally {
                     runSync(runWithResult, result.get());
                 }

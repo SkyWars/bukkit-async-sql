@@ -14,11 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.daboross.bukkitdev.mysqlmap.api;
+package net.daboross.bukkitdev.asyncsql;
 
-public interface MapTable<K, T> {
+public class ResultHolder<T> {
 
-    public void get(K key, ResultRunnable<T> runWithResult);
+    private T result;
 
-    public void set(K key, T value, ResultRunnable<Boolean> runAfter);
+    public T get() {
+        return result;
+    }
+
+    public void set(T result) {
+        this.result = result;
+    }
 }
