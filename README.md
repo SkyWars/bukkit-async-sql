@@ -78,4 +78,4 @@ sql.run("add " + diff + " score to " + name, new SQLRunnable() {
 ```
 
 ### Retrieving data
-This differs from updating the database in that you need to provide a 
+TODO
