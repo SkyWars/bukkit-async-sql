@@ -45,4 +45,8 @@ public class SQLConnectionInfo {
     public String getUrl() {
         return url;
     }
+
+    public void setProperty(String key, String value) {
+        this.properties.setProperty(key, value);
+    }
 }
