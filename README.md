@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS `" + tableName + "` (`username` VARCHAR(32), `user_sc
 Your table structure will probably differ, so you will want to change this statement to whatever SQL you want to run.
 
 You can do something similar to this whenever you want to run an update without registering any result.
+
+Another note, there is no need to catch any SQLExceptions inside the run method, bukkit-async-sql will handle them. It will also reconnect on any timeout-related exceptions so that all of the queries/updates do get run if possible.
 ```java
 final String tableName = "myTable"; // This would be set earlier, just declaring it here for example
 sql.run("create user table", new SQLRunnable() {
@@ -73,3 +75,4 @@ sql.run("add " + diff + " score to " + name, new SQLRunnable() {
 ```
 
 ### Retrieving data
+This differs from updating the database in that you need to 
