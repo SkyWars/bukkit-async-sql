@@ -21,6 +21,9 @@ String sqlUsername = "root";
 String sqlPassword = "qwerty";
 SQLConnectionInfo connectionInfo = new SQLConnectionInfo(sqlHost, sqlPort, sqlDatabase, sqlUsername, sqlPassword);
 
+// You can also set any properties here, e.g.:
+// connectionInfo.setProperty("characterEncoding", "utf8")
+
 AsyncSQL sql = new AsyncSQL(skywars, skywars.getLogger(), connectionInfo); // Typically this would set an instance variable.
 ```
 
@@ -75,4 +78,4 @@ sql.run("add " + diff + " score to " + name, new SQLRunnable() {
 ```
 
 ### Retrieving data
-This differs from updating the database in that you need to 
+This differs from updating the database in that you need to provide a 
