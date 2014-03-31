@@ -14,11 +14,11 @@ Here are some examples of how to use bukkit-async-sql.
 This is typically something that you would do once in your plugin. This creates an AsyncSQL instance that you can then use to do stuff with the database.
 
 ```java
-String sqlHost = "localhost"
+String sqlHost = "localhost";
 int sqlPort = 3306;
-String sqlDatabase = "minecraft"
-String sqlUsername = "root"
-String sqlPassword = "qwerty"
+String sqlDatabase = "minecraft";
+String sqlUsername = "root";
+String sqlPassword = "qwerty";
 SQLConnectionInfo connectionInfo = new SQLConnectionInfo(sqlHost, sqlPort, sqlDatabase, sqlUsername, sqlPassword);
 
 AsyncSQL sql = new AsyncSQL(skywars, skywars.getLogger(), connectionInfo); // Typically this would set an instance variable.
