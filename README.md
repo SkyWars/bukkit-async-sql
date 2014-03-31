@@ -33,7 +33,7 @@ Your table structure will probably differ, so you will want to change this state
 
 You can do something similar to this whenever you want to run an update without registering any result.
 ```java
-final String tableName = "myTable" // This would be set earlier, just declaring it here for example
+final String tableName = "myTable"; // This would be set earlier, just declaring it here for example
 sql.run("create user table", new SQLRunnable() {
     @Override
     public void run(Connection connection) throws SQLException {
@@ -55,7 +55,7 @@ The only thing that is different about this, is that it has query parameters. No
 ```java
 // These variables are probably going to want to be method parameters
 final int diff = 5;
-final String name = "daboross"
+final String name = "daboross";
 sql.run("add " + diff + " score to " + name, new SQLRunnable() {
     @Override
     public void run(final Connection connection) throws SQLException {
@@ -63,6 +63,11 @@ sql.run("add " + diff + " score to " + name, new SQLRunnable() {
         statement.setString(1, name);
         statement.setInt(2, diff);
         statement.setInt(3, diff);
+        try {
+            statement.execute();
+        } finally {
+            statement.close();
+        }
     }
 });
 ```
