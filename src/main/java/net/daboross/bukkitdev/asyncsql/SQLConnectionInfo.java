@@ -38,15 +38,22 @@ public class SQLConnectionInfo {
         this.properties.setProperty("password", password);
     }
 
+    public SQLConnectionInfo(String host, int port, String database, String username, String password, Properties properties) {
+        Validate.notNull(host, "Host cannot be null");
+        Validate.notNull(database, "Database cannot be null");
+        Validate.notNull(username, "Username cannot be null");
+        Validate.notNull(password, "Password cannot be null");
+        this.url = String.format("jdbc:mysql://%s:%s/%s", host, port, database);
+        this.properties = properties == null ? new Properties() : properties;
+        this.properties.setProperty("user", username);
+        this.properties.setProperty("password", password);
+    }
+
     public Connection createConnection() throws SQLException {
         return DriverManager.getConnection(url, properties);
     }
 
     public String getUrl() {
         return url;
-    }
-
-    public void setProperty(String key, String value) {
-        this.properties.setProperty(key, value);
     }
 }
