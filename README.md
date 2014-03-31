@@ -13,7 +13,7 @@ Here are some examples of how to use bukkit-async-sql.
 
 This is typically something that you would do once in your plugin. This creates an AsyncSQL instance that you can then use to do stuff with the database.
 
-```
+```java
 String sqlHost = "localhost"
 int sqlPort = 3306;
 String sqlDatabase = "minecraft"
@@ -25,7 +25,11 @@ AsyncSQL sql = new AsyncSQL(skywars, skywars.getLogger(), connectionInfo); // Ty
 ```
 
 #### Creating a table
-This statement creates a table with the given table structure. This is basically just running the SQL statement: ```CREATE TABLE IF NOT EXISTS `" + tableName + "` (`username` VARCHAR(32), `user_score` INT, PRIMARY KEY (`username`));```. Your table structure will probably differ, so you will want to change this statement to whatever SQL you want to run.
+This statement creates a table with the given table structure. This is basically just running the SQL statement:
+```sql
+CREATE TABLE IF NOT EXISTS `" + tableName + "` (`username` VARCHAR(32), `user_score` INT, PRIMARY KEY (`username`));
+```
+Your table structure will probably differ, so you will want to change this statement to whatever SQL you want to run.
 
 You can do something similar to this whenever you want to run an update without registering any result.
 ```java
@@ -48,7 +52,7 @@ This is very similar to creating a table, just with a different query statement.
 
 The only thing that is different about this, is that it has query parameters. Notice how I have the '?' query parameter. You will want to use that instead of just adding the username to the query string, as that allows for sql injection. You can instead use the statement.setString and statement.setInt methods to add user input to the string. On the MySQL server, the ? will be replaced with the int/string you set.
 
-```
+```java
 // These variables are probably going to want to be method parameters
 final int diff = 5;
 final String name = "daboross"
